@@ -3,7 +3,7 @@ import { FETCH_DATA_REQUEST, fetchDataSuccess, fetchDataFailure } from './action
 import apiService from './apiService';
 
 function* fetchData(action) {
-  const { limit,offset=0 } = action.payload;
+  const { limit,offset } = action.payload;
 
   try {
     const data = yield call(apiService.fetchData, limit,offset);

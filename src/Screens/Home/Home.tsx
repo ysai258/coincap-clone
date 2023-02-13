@@ -1,242 +1,76 @@
-import React from 'react';
-import { Table, Spin, Empty, message, Divider, Button, } from 'antd';
-import { connect } from 'react-redux';
-import { fetchDataRequest } from '../../Services/action';
-import Icon, { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import { Typography } from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import { ColumnType, SortOrder } from 'antd/es/table/interface';
-import "./Home.css";
+import  { Component } from 'react';
+import { Typography, Row, Col } from 'antd';
+import { SearchOutlined, SettingOutlined } from '@ant-design/icons';
+import "./home.css";
+
+import AssestsTable from '../../Components/AssetsTable/assestsTable';
 
 const { Text } = Typography;
-const moneyFormatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 2,
-  notation: 'compact',
-  compactDisplay: 'short'
-});
-const numberFormatter = new Intl.NumberFormat('en-US', {
-  maximumFractionDigits: 2,
-  notation: 'compact',
-  compactDisplay: 'short'
-});
 
-const renderTitle = (title: string, key: string, sortColumns: {
-  column: ColumnType<any>;
-  order: SortOrder;
-}[] | undefined) => {
-  const sortedColumn = sortColumns?.find(({ column }) => column.key === key);
-  return (
-    <div>
-      {title}
-      {sortedColumn ? (
-        sortedColumn.order === "ascend" ? (
-          <CaretUpOutlined />
-        ) : (
-          <CaretDownOutlined />
-        )
-      ) : null}
-    </div>
-  )
-}
-const columns: ColumnsType<any> = [
-  {
-    title: ({ sortColumns }) => renderTitle('Rank', 'rank', sortColumns),
-    dataIndex: 'rank',
-    key: 'rank',
-    defaultSortOrder: 'ascend',
-    sorter: (a, b) => a.rank - b.rank
-  },
-  {
-    title: ({ sortColumns }) => renderTitle('Name', 'name', sortColumns),
-    dataIndex: 'name',
-    key: 'name',
-    render: (value: any, record: any) => (
-      <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-        <Icon component={() => <ImgIcon record={record} />} />
-        <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 8 }}>
-          <Text>{value}</Text>
-          <Text style={{ fontSize: '0.8em', opacity: 0.7 }}>{record.symbol}</Text>
-        </div>
-      </div>
-    ),
-    sorter: (a, b) => a.name.localeCompare(b.name),
-  },
-  {
-    title: ({ sortColumns }) => renderTitle('Price', 'priceUsd', sortColumns),
-    dataIndex: 'priceUsd',
-    key: 'priceUsd',
-    render: (value: any, record: any) => (
-      <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-        <Text>{Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Text>
-      </div>
-    ),
-    sorter: (a, b) => a.priceUsd - b.priceUsd
-  },
-  {
-    title: ({ sortColumns }) => renderTitle('Market Cap', 'marketCapUsd', sortColumns),
-    dataIndex: 'marketCapUsd',
-    key: 'marketCapUsd',
-    render: (value: any, record: any) => {
-      value = moneyFormatter.format(Number(value)).toLocaleLowerCase()
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-          <Text>{value}</Text>
-        </div>);
-    },
-    sorter: (a, b) => a.marketCapUsd - b.marketCapUsd,
-  },
-  {
-    title: ({ sortColumns }) => renderTitle('VWAP (24Hr)', 'vwap24Hr', sortColumns),
-    dataIndex: 'vwap24Hr',
-    key: 'vwap24Hr',
-    render: (value: any, record: any) => (
-      <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-        <Text>{Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Text>
-      </div>
-    ),
-    sorter: (a, b) => a.vwap24Hr - b.vwap24Hr,
-  },
-  {
-    title: ({ sortColumns }) => renderTitle('Supply', 'supply', sortColumns),
-    dataIndex: 'supply',
-    key: 'supply',
-    render: (value: any, record: any) => {
-      value = numberFormatter.format(Number(value)).toLocaleLowerCase()
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-          <Text>{value}</Text>
-        </div>);
-    },
-    sorter: (a, b) => a.supply - b.supply
-  },
-  {
-    title: ({ sortColumns }) => renderTitle('Volumen (24Hr)', 'volumeUsd24Hr', sortColumns),
-    dataIndex: 'volumeUsd24Hr',
-    key: 'volumeUsd24Hr',
-    render: (value: any, record: any) => {
-      value = moneyFormatter.format(Number(value)).toLocaleLowerCase()
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-          <Text>{value}</Text>
-        </div>);
-    },
-    sorter: (a, b) => a.volumeUsd24Hr - b.volumeUsd24Hr
-  },
-  {
+const stats = [
+  { id: 1, name: "MARKET CAP", value: "$1.21T" },
+  { id: 2, name: "EXCHANGE VOL", value: "$26.26B" },
+  { id: 3, name: "ASSETS", value: "2,295" },
+  { id: 4, name: "EXCHANGES", value: "73" },
+  { id: 5, name: "MARKETS", value: "12,563" },
+  { id: 6, name: "BTC DOM INDEX", value: "35.1%" },
+]
 
-    title: ({ sortColumns }) => renderTitle('Change (24Hr)', 'changePercent24Hr', sortColumns),
-    dataIndex: 'changePercent24Hr',
-    key: 'changePercent24Hr',
-    render: (value: any, record: any) => {
-      var isNeg = Number(value) < 0
-      value = numberFormatter.format(Number(value)).toLocaleLowerCase()
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-          <Text style={{ color: isNeg ? 'red' : 'green' }}>{`${value}%`}</Text>
-        </div>);
-    },
-    sorter: (a, b) => a.changePercent24Hr - b.changePercent24Hr
-
-  },
-];
-interface MyProps {
-  dispatch: any,
-  error: any,
-  data: any,
-  isLoading: any,
-}
-
-interface MyState {
-  value: string
-}
-class Home extends React.Component<MyProps, MyState> {
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch(fetchDataRequest(50));
-  }
-
-  componentDidUpdate(prevProps: any) {
-    const { error } = this.props;
-    if (error && prevProps.error !== error) {
-      message.error(error.message);
-    }
-  }
+class Home extends Component {
 
   render() {
-    const { data, isLoading, error } = this.props;
-
-    if (isLoading) {
-      return (
-        <div style={{ textAlign: 'center', paddingTop: '100px' }}>
-          <Spin size="large" />
-        </div>
-      );
-    }
-
-    if (!isLoading && error) {
-      return (
-        <div style={{ textAlign: 'center', paddingTop: '100px' }}>
-          An error occurred: {error.message}
-        </div>
-      );
-    }
-
-    if (!data || data.length === 0) {
-      return (
-        <div style={{ textAlign: 'center', paddingTop: '100px' }}>
-          <Empty description="No data available" />
-        </div>
-      );
-    }
-
     return (
-      <div style={{}}>
-        <Table
-          sortDirections={['ascend', 'descend', 'ascend']}
-          showSorterTooltip={false}
-          columns={columns}
-          dataSource={data}
-          rowKey="symbol"
-          pagination={false}
-          
-        />
-        <Button onClick={() => {
-          const { dispatch } = this.props;
-          dispatch(fetchDataRequest(50, 50));
-        }} type="primary" shape="round" size='large' loading={isLoading}>
-          load more
-        </Button>
+      <div style={{ backgroundImage: "linear-gradient(to right, #3F51B5 , #64B5F6)", width: "100%" }}>
+        <div style={{ padding: "5px", display: "flex", alignItems: "center", justifyContent: "center", backgroundImage: "linear-gradient(97.53deg, rgb(246, 135, 179) 5.6%, rgb(123, 97, 255) 59.16%, rgb(22, 209, 161) 119.34%)" }}>
+          <img src={"https://coincap.io/static/logos/ss-mark-white.svg"} style={{ height: "25px", marginRight: "5px" }} />
+          <Text style={{ color: "white", fontSize: 14, fontFamily: "Lato,Helvetica Neue,Arial,Helvetica,sans-serif" }}>Buy, sell, & swap your favorite assets. No KYC. No added fees. Decentralized.</Text>
+          <img src={"https://coincap.io/static/icons/arrow-right.svg"} style={{ marginLeft: "5px", height: "16px" }} />
+        </div>
+        <Row justify="space-around" align="middle" style={{ backgroundColor: "white", position: "sticky", top: 0, zIndex: 9999 }}>
+          <Col xs={6} sm={6} md={6} lg={6} style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+            <div className='nav-item'>Coins</div>
+            <div className='nav-item'>Exchanges</div>
+            <div className='nav-item'>Swap</div>
+          </Col>
+          <Col lg={12} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div className='nav-item nav-logo'><img src='https://coincap.io/static/logos/black.svg' width={"100%"} height={30} /></div>
+          </Col>
+          <Col xs={6} sm={6} md={6} lg={6} style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+            <div className='nav-item'>USD</div>
+            <div className='nav-item'>English</div>
+            <div className='nav-item'><SearchOutlined /></div>
+            <div className='nav-item'><SettingOutlined /></div>
+          </Col>
+        </Row>
+
+        <Row style={{ backgroundImage: "linear-gradient(to right, #3F51B5 , #64B5F6)" }} justify="space-around" align="middle">
+          <Col xs={0} sm={1} md={0} lg={2}></Col>
+          {stats.map(stat => {
+            return <Col style={{ marginTop: "10px", marginBottom: "10px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }} xs={22} sm={20} md={8} lg={3} key={stat.id}>
+              <Text style={{ color: "white", fontWeight: "bold", fontSize: 14, fontFamily: "Lato,Helvetica Neue,Arial,Helvetica,sans-serif" }}>{stat.name}</Text>
+              <Text style={{ color: "white", fontWeight: "bold", fontSize: 21, fontFamily: "Lato,Helvetica Neue,Arial,Helvetica,sans-serif" }}>{stat.value}</Text>
+            </Col>
+          })}
+          <Col xs={0} sm={1} md={0} lg={2}></Col>
+        </Row>
+        <div style={{ position: "relative" }}>
+          <div style={{ height: "80px", backgroundImage: "linear-gradient(to right, #3F51B5 , #64B5F6)" }}></div>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
+            <Row justify="space-around" align="middle">
+              <Col xs={0} sm={1} md={0} lg={2}></Col>
+              <Col lg={20} style={{ zIndex: 9998, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                <AssestsTable />
+              </Col>
+              <Col xs={0} sm={1} md={0} lg={2}></Col>
+            </Row>
+
+          </div>
+        </div>
+
       </div>
     );
   }
 }
 
-const ImgIcon = ({ record }: { record: any }) => {
-  const [imgSrc, setImgSrc] = React.useState(`https://assets.coincap.io/assets/icons/${record.symbol.toLowerCase()}@2x.png`);
-  React.useEffect(() => {
-    const image = new Image();
-    image.src = imgSrc;
-    image.onload = () => {
-      setImgSrc(imgSrc);
-    };
-    image.onerror = () => {
-      setImgSrc('https://coincap.io/static/logo_mark.png');
-    };
-  }, []);
-
-  return (
-    <img src={imgSrc} height={25} width={25} />
-  );
-};
-
-
-const mapStateToProps = (state: any) => ({
-  data: state.data.data,
-  isLoading: state.isLoading,
-  error: state.error,
-});
-
-export default connect(mapStateToProps)(Home);
+export default Home;
 

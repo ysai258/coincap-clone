@@ -5,9 +5,33 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #ECEFF1;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.ant-table-row > .ant-table-cell{
+  background-color: white;
+}
+
+.nav-item {
+  padding: 10px;
+}
+
+
+.nav-item.nav-logo img{
+  cursor: pointer; 
+}
+
+.nav-item:hover{
+  background-color: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+}
+
+.nav-item.nav-logo{
+  background-color: transparent;
+  cursor:initial;
 }
