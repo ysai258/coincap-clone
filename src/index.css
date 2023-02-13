@@ -35,3 +35,44 @@ code {
   background-color: transparent;
   cursor:initial;
 }
+
+.navbar-lg, .stats-lg{
+  display: flex;
+}
+.navbar-md, .stats-md{
+  display: none;
+}
+
+.table-container{
+  padding: 0 10%;
+}
+
+.ant-menu, .ant-menu-submenu-title > .ant-menu-title-content, .ant-menu-submenu-title > .ant-menu-submenu-arrow{
+  background-color: transparent;
+  color: white;
+}
+
+@media screen and (max-width: 425px) {
+  .navbar-lg, .stats-lg{
+    display: none;
+  }
+  .navbar-md, .stats-md{
+    display: flex;
+  }
+  .table-container{
+    padding: 0;
+  }
+}
+@media screen and (max-width: 768px) {
+  .navbar-lg, .stats-lg{
+    display: none;
+  }
+  .navbar-md, .stats-md{
+    display: flex;
+  }
+  .table-container{
+    padding: 0;
+  }
+}
+
+

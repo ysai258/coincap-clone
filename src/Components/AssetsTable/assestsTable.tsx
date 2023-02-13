@@ -111,7 +111,7 @@ const columns: ColumnsType<any> = [
         sorter: (a, b) => a.supply - b.supply
     },
     {
-        title: ({ sortColumns }) => renderTitle('Volumen (24Hr)', 'volumeUsd24Hr', sortColumns),
+        title: ({ sortColumns }) => renderTitle('Volume (24Hr)', 'volumeUsd24Hr', sortColumns),
         dataIndex: 'volumeUsd24Hr',
         key: 'volumeUsd24Hr',
         render: (value: any, record: any) => {
@@ -140,6 +140,45 @@ const columns: ColumnsType<any> = [
 
     },
 ];
+const columnsMD: ColumnsType<any> = [
+    {
+        title: ({ sortColumns }) => renderTitle('Name', 'name', sortColumns),
+        dataIndex: 'name',
+        key: 'name',
+        render: (value: any, record: any) => (
+            <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                <Icon component={() => <ImgIcon record={record} />} />
+                <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 8 }}>
+                    <Text>{value}</Text>
+                    <Text style={{ fontSize: '0.8em', opacity: 0.7 }}>{record.symbol}</Text>
+                </div>
+            </div>
+        ),
+        sorter: (a, b) => a.name.localeCompare(b.name),
+    },
+    {
+        title: ({ sortColumns }) => renderTitle('Price', 'priceUsd', sortColumns),
+        dataIndex: 'priceUsd',
+        key: 'priceUsd',
+        render: (value: any, record: any) => (
+            <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                <Text>{Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Text>
+            </div>
+        ),
+        sorter: (a, b) => a.priceUsd - b.priceUsd
+    },
+    {
+        title: ({ sortColumns }) => renderTitle('VWAP (24Hr)', 'vwap24Hr', sortColumns),
+        dataIndex: 'vwap24Hr',
+        key: 'vwap24Hr',
+        render: (value: any, record: any) => (
+            <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                <Text>{Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Text>
+            </div>
+        ),
+        sorter: (a, b) => a.vwap24Hr - b.vwap24Hr,
+    },
+];
 interface MyProps {
     dispatch: any,
     error: any,
@@ -148,14 +187,31 @@ interface MyProps {
 }
 
 interface MyState {
+    width: number,
+    height: number,
     limit: number,
     offset: number,
 }
 class AssestTable extends React.Component<MyProps, MyState> {
+    constructor(MyProps: any) {
+        super(MyProps);
+        this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    }
     componentDidMount() {
         this.setState({ limit: LIMIT, offset: 0 })
         const { dispatch } = this.props;
         dispatch(fetchDataRequest(LIMIT));
+        this.updateWindowDimensions();
+        window.addEventListener('resize', this.updateWindowDimensions);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateWindowDimensions);
+    }
+      
+    updateWindowDimensions() {
+        console.log(window.innerWidth, window.innerHeight);
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
     }
 
     componentDidUpdate(prevProps: any) {
@@ -196,11 +252,11 @@ class AssestTable extends React.Component<MyProps, MyState> {
                 <Table
                     sortDirections={['ascend', 'descend', 'ascend']}
                     showSorterTooltip={false}
-                    columns={columns}
+                    columns={window.innerWidth<=782 ? columnsMD : columns}
                     dataSource={data}
                     rowKey="symbol"
                     pagination={false}
-                    
+                    tableLayout="fixed"
                 />
                 <Button
                     type="primary"
