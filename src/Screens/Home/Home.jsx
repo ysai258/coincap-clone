@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Row, Col, Menu, Drawer, Button } from 'antd';
 import { SearchOutlined, SettingOutlined, MenuOutlined } from '@ant-design/icons';
-import "./home.css";
+import "./Home.css";
 
 import AssestsTable from '../../Components/AssetsTable/assestsTable';
 import Selector from '../../Components/Selector/selector';
