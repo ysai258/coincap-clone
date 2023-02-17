@@ -3,8 +3,6 @@ import { Table, Spin, Empty, message, Typography, Button } from 'antd';
 import { connect } from 'react-redux';
 import { fetchDataRequest } from '../../Services/action';
 import Icon, { CaretUpOutlined, CaretDownOutlined,LoadingOutlined } from '@ant-design/icons';
-import { ColumnsType } from 'antd/es/table';
-import { ColumnType, SortOrder } from 'antd/es/table/interface';
 
 const { Text } = Typography;
 const LIMIT = 50;
@@ -21,10 +19,7 @@ const numberFormatter = new Intl.NumberFormat('en-US', {
     compactDisplay: 'short'
 });
 
-const renderTitle = (title: string, key: string, sortColumns: {
-    column: ColumnType<any>;
-    order: SortOrder;
-}[] | undefined) => {
+const renderTitle = (title, key, sortColumns) => {
     const sortedColumn = sortColumns?.find(({ column }) => column.key === key);
     return (
         <div>
@@ -39,7 +34,7 @@ const renderTitle = (title: string, key: string, sortColumns: {
         </div>
     )
 }
-const columns: ColumnsType<any> = [
+const columns = [
     {
         title: ({ sortColumns }) => renderTitle('Rank', 'rank', sortColumns),
         dataIndex: 'rank',
@@ -51,7 +46,7 @@ const columns: ColumnsType<any> = [
         title: ({ sortColumns }) => renderTitle('Name', 'name', sortColumns),
         dataIndex: 'name',
         key: 'name',
-        render: (value: any, record: any) => (
+        render: (value, record) => (
             <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
                 <Icon component={() => <ImgIcon record={record} />} />
                 <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 8 }}>
@@ -66,7 +61,7 @@ const columns: ColumnsType<any> = [
         title: ({ sortColumns }) => renderTitle('Price', 'priceUsd', sortColumns),
         dataIndex: 'priceUsd',
         key: 'priceUsd',
-        render: (value: any, record: any) => (
+        render: (value) => (
             <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
                 <Text>{Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Text>
             </div>
@@ -77,7 +72,7 @@ const columns: ColumnsType<any> = [
         title: ({ sortColumns }) => renderTitle('Market Cap', 'marketCapUsd', sortColumns),
         dataIndex: 'marketCapUsd',
         key: 'marketCapUsd',
-        render: (value: any, record: any) => {
+        render: (value) => {
             value = moneyFormatter.format(Number(value)).toLocaleLowerCase()
             return (
                 <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
@@ -90,7 +85,7 @@ const columns: ColumnsType<any> = [
         title: ({ sortColumns }) => renderTitle('VWAP (24Hr)', 'vwap24Hr', sortColumns),
         dataIndex: 'vwap24Hr',
         key: 'vwap24Hr',
-        render: (value: any, record: any) => (
+        render: (value) => (
             <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
                 <Text>{Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Text>
             </div>
@@ -101,7 +96,7 @@ const columns: ColumnsType<any> = [
         title: ({ sortColumns }) => renderTitle('Supply', 'supply', sortColumns),
         dataIndex: 'supply',
         key: 'supply',
-        render: (value: any, record: any) => {
+        render: (value) => {
             value = numberFormatter.format(Number(value)).toLocaleLowerCase()
             return (
                 <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
@@ -114,7 +109,7 @@ const columns: ColumnsType<any> = [
         title: ({ sortColumns }) => renderTitle('Volume (24Hr)', 'volumeUsd24Hr', sortColumns),
         dataIndex: 'volumeUsd24Hr',
         key: 'volumeUsd24Hr',
-        render: (value: any, record: any) => {
+        render: (value) => {
             value = moneyFormatter.format(Number(value)).toLocaleLowerCase()
             return (
                 <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
@@ -128,7 +123,7 @@ const columns: ColumnsType<any> = [
         title: ({ sortColumns }) => renderTitle('Change (24Hr)', 'changePercent24Hr', sortColumns),
         dataIndex: 'changePercent24Hr',
         key: 'changePercent24Hr',
-        render: (value: any, record: any) => {
+        render: (value) => {
             var isNeg = Number(value) < 0
             value = numberFormatter.format(Number(value)).toLocaleLowerCase()
             return (
@@ -140,12 +135,12 @@ const columns: ColumnsType<any> = [
 
     },
 ];
-const columnsMD: ColumnsType<any> = [
+const columnsMD = [
     {
         title: ({ sortColumns }) => renderTitle('Name', 'name', sortColumns),
         dataIndex: 'name',
         key: 'name',
-        render: (value: any, record: any) => (
+        render: (value, record) => (
             <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
                 <Icon component={() => <ImgIcon record={record} />} />
                 <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 8 }}>
@@ -160,7 +155,7 @@ const columnsMD: ColumnsType<any> = [
         title: ({ sortColumns }) => renderTitle('Price', 'priceUsd', sortColumns),
         dataIndex: 'priceUsd',
         key: 'priceUsd',
-        render: (value: any, record: any) => (
+        render: (value) => (
             <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
                 <Text>{Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Text>
             </div>
@@ -171,7 +166,7 @@ const columnsMD: ColumnsType<any> = [
         title: ({ sortColumns }) => renderTitle('VWAP (24Hr)', 'vwap24Hr', sortColumns),
         dataIndex: 'vwap24Hr',
         key: 'vwap24Hr',
-        render: (value: any, record: any) => (
+        render: (value) => (
             <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
                 <Text>{Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Text>
             </div>
@@ -179,21 +174,8 @@ const columnsMD: ColumnsType<any> = [
         sorter: (a, b) => a.vwap24Hr - b.vwap24Hr,
     },
 ];
-interface MyProps {
-    dispatch: any,
-    error: any,
-    data: any,
-    isLoading: any,
-}
-
-interface MyState {
-    width: number,
-    height: number,
-    limit: number,
-    offset: number,
-}
-class AssestTable extends React.Component<MyProps, MyState> {
-    constructor(MyProps: any) {
+class AssestTable extends React.Component {
+    constructor(MyProps) {
         super(MyProps);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
@@ -210,11 +192,10 @@ class AssestTable extends React.Component<MyProps, MyState> {
     }
       
     updateWindowDimensions() {
-        console.log(window.innerWidth, window.innerHeight);
         this.setState({ width: window.innerWidth, height: window.innerHeight });
     }
 
-    componentDidUpdate(prevProps: any) {
+    componentDidUpdate(prevProps) {
         const { error } = this.props;
         if (error && prevProps.error !== error) {
             message.error(error.message);
@@ -283,26 +264,34 @@ class AssestTable extends React.Component<MyProps, MyState> {
     }
 }
 
-const ImgIcon = ({ record }: { record: any }) => {
-    const [imgSrc, setImgSrc] = React.useState(`https://assets.coincap.io/assets/icons/${record.symbol.toLowerCase()}@2x.png`);
-    React.useEffect(() => {
+class ImgIcon extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            imgSrc: `https://assets.coincap.io/assets/icons/${props.record.symbol.toLowerCase()}@2x.png`
+        };
+    }
+
+    componentDidMount() {
         const image = new Image();
-        image.src = imgSrc;
+        image.src = this.state.imgSrc;
         image.onload = () => {
-            setImgSrc(imgSrc);
+            this.setState({ imgSrc: this.state.imgSrc });
         };
         image.onerror = () => {
-            setImgSrc('https://coincap.io/static/logo_mark.png');
+            this.setState({ imgSrc: 'https://coincap.io/static/logo_mark.png' });
         };
-    });
+    }
 
-    return (
-        <img src={imgSrc} height={25} width={25} />
-    );
-};
+    render() {
+        return (
+            <img src={this.state.imgSrc} height={25} width={25} />
+        );
+    }
+}
 
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state) => ({
     data: state.data.data,
     isLoading: state.isLoading,
     error: state.error,

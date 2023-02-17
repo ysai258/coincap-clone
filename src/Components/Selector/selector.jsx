@@ -1,11 +1,8 @@
 import React from 'react';
 import { Select } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
-interface Props {
-  options: Array<{ value: string; label: string }>;
-  defaultValue?: string;
-}
-class Selector extends React.Component<Props>  {
+
+class Selector extends React.Component {
   render() {
     return (
       <div style={{ position: 'relative' }}>

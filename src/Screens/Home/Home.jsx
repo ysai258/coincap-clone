@@ -1,12 +1,10 @@
-import { Component } from 'react';
+import React from 'react';
 import { Typography, Row, Col, Menu, Drawer, Button } from 'antd';
 import { SearchOutlined, SettingOutlined, MenuOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
 import "./home.css";
 
 import AssestsTable from '../../Components/AssetsTable/assestsTable';
 import Selector from '../../Components/Selector/selector';
-type MenuItem = Required<MenuProps>['items'][number];
 const { Text } = Typography;
 
 const stats = [
@@ -32,21 +30,15 @@ const children = stats.map(stat => {
   }
 });
 
-interface MyProps {
-
-}
-interface MyState {
-  open: boolean,
-}
-class Home extends Component<MyProps, MyState> {
-  constructor(props: MyProps) {
+class Home extends  React.Component {
+  constructor(props) {
     super(props);
 
     this.state = {
       open: false
     };
   }
-  componentDidMount(): void {
+  componentDidMount() {
     this.setState({ open: false })
   }
   render() {
